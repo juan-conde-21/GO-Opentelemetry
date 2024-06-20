@@ -1,0 +1,57 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"strconv"
+)
+
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World!")
+}
+
+func sumHandler(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	num1Str := query.Get("num1")
+	num2Str := query.Get("num2")
+
+	num1, err1 := strconv.Atoi(num1Str)
+	num2, err2 := strconv.Atoi(num2Str)
+
+	if err1 != nil || err2 != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	result := num1 + num2
+	fmt.Fprintf(w, "Sum: %d", result)
+}
+
+func subtractHandler(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	num1Str := query.Get("num1")
+	num2Str := query.Get("num2")
+
+	num1, err1 := strconv.Atoi(num1Str)
+	num2, err2 := strconv.Atoi(num2Str)
+
+	if err1 != nil || err2 != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	result := num1 - num2
+	fmt.Fprintf(w, "Subtraction: %d", result)
+}
+
+func main() {
+	http.HandleFunc("/hello", helloHandler)
+	http.HandleFunc("/sum", sumHandler)
+	http.HandleFunc("/subtract", subtractHandler)
+
+	fmt.Println("Server is listening on port 8080...")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatalf("Could not start server: %s\n", err.Error())
+	}
+}
